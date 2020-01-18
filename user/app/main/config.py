@@ -159,7 +159,7 @@ class DevelopmentConfig(Config):
     # SQLALCHEMY_DATABASE_URI = DATABASE_URL
 
     # # This configs for deploy on heroku
-    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', DATABASE_URL)
 
 
 class TestingConfig(Config):
@@ -173,7 +173,7 @@ class TestingConfig(Config):
     # SQLALCHEMY_DATABASE_URI = DATABASE_URL
 
     # # This configs for deploy on heroku
-    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', DATABASE_URL)
 
 
 class ProductionConfig(Config):
