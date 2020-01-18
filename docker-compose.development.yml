@@ -1,0 +1,12 @@
+#
+# syntax: https://docs.docker.com/compose/yml/
+#
+
+version: "3"
+
+services:
+    user:
+        env_file: env/development.env
+
+    postgres:
+        env_file: env/development.env

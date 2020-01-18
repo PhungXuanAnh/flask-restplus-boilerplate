@@ -1,0 +1,21 @@
+#
+# syntax: https://docs.docker.com/compose/yml/
+#
+
+version: "3"
+
+services:
+    user:
+        env_file: env/staging.env
+
+    crawler:
+        env_file: env/staging.env
+
+    mongo:
+        env_file: env/staging.env
+        
+    postgres:
+        env_file: env/staging.env
+
+    kafka:
+        env_file: env/staging.env

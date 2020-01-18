@@ -1,0 +1,33 @@
+#!/bin/bash
+# Reference: https://www.pgbouncer.org/config.html#authentication-file-format
+# A single script to generate an entry in for userlist.txt
+# Usage:
+#
+# $ ./generate-userlist
+# Enter username: admin
+# Enter password:
+# "admin" "md5f6fdffe48c908deb0f4c3bd36c032e72"
+#
+# Quickly amend a file with multiple users:
+#
+# $ ./generate-userlist admin >> userlist.txt
+# Enter password:
+#
+# $ cat userlist.txt
+# "admin" "md5f6fdffe48c908deb0f4c3bd36c032e72"
+
+
+if [[ $# -eq 1 ]]; then
+  USERNAME="$1"
+else
+  read -p "Enter username: " USERNAME
+fi
+
+read -s -p "Enter password: " PASSWORD
+echo >&2
+
+# Using openssl md5 to avoid differences between OSX and Linux (`md5` vs `md5sum`)
+encrypted_password="md5$(printf "$PASSWORD$USERNAME" | openssl md5 | awk '{print $2}')"
+# encrypted_password=$(echo -n "md5"; echo -n "$PASSWORD$USERNAME" | md5sum | awk '{print $1}')
+
+echo "\"$USERNAME\" \"$encrypted_password\""

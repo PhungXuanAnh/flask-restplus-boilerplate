@@ -1,0 +1,10 @@
+api: gunicorn wsgi:app --reload --threads 1 --workers=1 -b :5000
+# api: gunicorn wsgi:app --reload -k gevent --worker-connections 1000 --workers=3 -b :5000
+# project_worker: celery -A app.main.worker.tasks worker -l info -f log/worker.log -n run_project_worker@%h -Q run_project_queue -c 6
+# notify_done_worker: celery -A app.main.worker.tasks worker -c 2 -l info -f log/worker.log -n notify_done_worker@%h -Q notify_done_queue
+
+# TODO: uncommend worker celery
+worker: watchmedo auto-restart --directory . --pattern '*.py' --recursive -- celery -A app.main.worker.tasks worker -c 1
+# run_project_worker: watchmedo auto-restart --directory . --pattern '*.py' --recursive -- celery -A app.main.worker.tasks worker -c 6 -l info -f log/worker.log -n run_project_worker@%h -Q run_project_queue
+# notify_done_worker: watchmedo auto-restart --directory . --pattern '*.py' --recursive -- celery -A app.main.worker.tasks worker -c 2 -l info -f log/worker.log -n notify_done_worker@%h -Q notify_done_queue
+# flower: celery flower -A app.main.worker.celery_app --address=0.0.0.0 --port=5555

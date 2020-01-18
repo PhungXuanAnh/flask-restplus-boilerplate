@@ -1,0 +1,133 @@
+#
+# syntax: https://docs.docker.com/compose/yml/
+#
+
+version: "3"
+
+services:
+    user:
+        restart: always
+        build:
+            context: .
+            dockerfile: user/Dockerfile
+        image: flask-sample-app/user:0.1.0
+        depends_on:
+            # TODO: this depends_on don't really proper, for ensure using wait_for_it script
+            - postgres
+            - rabbitmq
+        networks:
+            - internal-network
+        hostname: user
+        ports:
+            - 5000:5000
+            - 5555:5555
+        volumes:
+            - ./user:/build
+            - ./common:/build/common
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100M"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 300M
+
+    rabbitmq:
+        image: rabbitmq:3.7.7-management
+        ports:
+            - 15672:15672
+            - 5672:5672
+        hostname: rabbitmq
+        restart: always
+        networks:
+            - internal-network
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100M"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 150M
+
+    postgres:
+        image: postgres:9.6
+        hostname: postgres
+        ports:
+            - 5432:5432
+        restart: always
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+            # NOTE: ensure 'postgres-data' is empty, if not,
+            # scripts in 'docker-entrypoint-initdb.d' below will not run
+            # - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+        networks:
+            - internal-network
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100M"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 50M
+
+    pgbouncer:
+        # image: edoburu/pgbouncer:1.9.0
+        image: flask-restplus-boilerplate/pgbouncer:1.9.0
+        build:
+            context: .
+            dockerfile: pgbouncer/Dockerfile
+        hostname: pgbouncer
+        ports:
+            - 6432:6432
+        restart: always
+        volumes:
+            - ./pgbouncer/configs/:/etc/pgbouncer/:ro
+        networks:
+            - internal-network
+        depends_on: 
+            - postgres
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100M"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 50M
+
+    # redis:
+    #     image: flask-sample-app/redis:5.0.5
+    #     build:
+    #         context: .
+    #         dockerfile: redis/Dockerfile
+    #     hostname: redis
+    #     restart: always
+    #     networks:
+    #         - internal-network
+    #     volumes: 
+    #         - redis-data:/data
+    #         - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    #     logging:
+    #         driver: "json-file"
+    #         options:
+    #             max-size: "100M"
+    #             max-file: "3"
+    #     deploy:
+    #         resources:
+    #             limits:
+    #                 memory: 10M
+
+
+volumes:
+    postgres-data:
+    # redis-data:
+
+networks:
+    internal-network:
