@@ -137,8 +137,12 @@ REDIS_URL = "redis://{host}:{port}".format(host=REDIS_HOST, port=REDIS_PORT)
 # ==================== CELERY ===========================================
 # CELERY_BROKER_URL = REDIS_URL
 # CELERY_RESULT_BACKEND = REDIS_URL
-CELERY_BROKER_URL = RABBITMQ_URL
-CELERY_RESULT_BACKEND = RABBITMQ_URL
+
+# CELERY_BROKER_URL = RABBITMQ_URL
+# CELERY_RESULT_BACKEND = RABBITMQ_URL
+
+CELERY_BROKER_URL = 'memory://localhost/'
+CELERY_RESULT_BACKEND = 'db+sqlite:///celery-task-results.sqlite'
 
 
 class Config:
@@ -147,21 +151,29 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    # uncomment the line below to use postgres
-    # SQLALCHEMY_DATABASE_URI = postgres_local_base
     DEBUG = True
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../flask_boilerplate_main.db')
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # # This configs for deploy on local or vm cloud
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../flask_boilerplate_main.db')
+    # SQLALCHEMY_DATABASE_URI = DATABASE_URL
+
+    # # This configs for deploy on heroku
+    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../flask_boilerplate_test.db')
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # # This configs for deploy on local or vm cloud
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../flask_boilerplate_test.db')
+    # SQLALCHEMY_DATABASE_URI = DATABASE_URL
+
+    # # This configs for deploy on heroku
+    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 class ProductionConfig(Config):

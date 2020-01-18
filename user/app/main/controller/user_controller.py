@@ -20,6 +20,7 @@ parser.add_argument('Authorization', type=str,
 
 user_service = UserService(api)
 
+
 @api.route('/')
 class UserList(Resource):
     @api.doc('list_of_registered_users')
@@ -29,7 +30,7 @@ class UserList(Resource):
         """List all registered users"""
         LOG.error('=================---------------------- getting all user..')
         LOG.warning('=================---------------------- getting all user..')
-        task_add.apply_async((1, 2))
+        call_celery_task()
         return user_service.get_all_users()
 
     @api.expect(_user, validate=True)
@@ -38,6 +39,7 @@ class UserList(Resource):
     def post(self):
         """Creates a new User """
         LOG.info('=================---------------------- creating user..')
+        call_celery_task()
         data = request.json
         return user_service.save_new_user(data=data)
 
@@ -66,4 +68,12 @@ class User(Resource):
 @api.route('/publish')
 class Publish(Resource):
     def get(self):
+        call_celery_task()
         return 'this is publish api'
+
+
+def call_celery_task():
+    # NOTE: when there is no running worker, comment below line to avoid hang when call api
+    result = task_add.apply_async((1, 2))
+    LOG.info('CELERY Task finished? : {}'.format(result.ready()))
+    LOG.info('CELERY Task result: {}'.format(result.result))
