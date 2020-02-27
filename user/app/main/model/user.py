@@ -1,11 +1,7 @@
 
 import datetime
 
-from .. import db, flask_bcrypt
-# NOTE: commented import below will lead to bellow error, need to investigate about this error
-# sqlalchemy.exc.InvalidRequestError: Table 'user' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
-# from app.main import db, flask_bcrypt
-
+from app.main import db, flask_bcrypt
 from app.main.model.blacklist import BlacklistToken
 from app.main.config import key
 import jwt

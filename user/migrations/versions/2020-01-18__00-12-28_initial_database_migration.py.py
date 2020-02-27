@@ -22,9 +22,7 @@ depends_on = None
 flask_bcrypt = Bcrypt()
 
 current_working_dir = os.getcwd()
-sys.path.append(current_working_dir + '/app')
-# from main.model user import user
-user = import_module('main.model.user')
+user = import_module('app.main.model.user')
 
 
 def upgrade():
