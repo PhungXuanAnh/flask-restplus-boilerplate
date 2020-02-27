@@ -30,9 +30,12 @@ FLASK RESTFUL API BOILER-PLATE WITH JWT
 
 ## 1.4. Prepare database
 
-Migrate database
+Create database
 
-`make db_upgrade`
+```shell
+sudo chmod 777 user/log/*
+make db_upgrade
+```
 
 We can connect directly to postgres or connect to posgres though [PGBouncer](https://www.compose.com/articles/how-to-pool-postgresql-connections-with-pgbouncer/)
 
