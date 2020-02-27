@@ -19,4 +19,4 @@ flower==0.9.3
 # dev
 pylint-flask==0.6
 Flask-Cors==3.0.8
-watchdog
+watchdog==0.9.0
